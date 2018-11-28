@@ -1,52 +1,55 @@
 #!/bin/bash
 
+for name in $@
+do
 
-fileName=$1
+fileName=$name
 
-if [ -z "$fileName" ]
-then
-    echo "Specify a singleton name"
-    read newFileName
-    fileName=$newFileName;
     if [ -z "$fileName" ]
-        then
-            echo "Invalid name, exiting"
-            exit 1
+    then
+        echo "Specify a singleton name"
+        read newFileName
+        fileName=$newFileName;
+        if [ -z "$fileName" ]
+            then
+                echo "Invalid name, exiting"
+                exit 1
+        fi
     fi
-fi
 
-if [ -e $fileName.cs ]
-then
-    echo "$fileName already exists."
-    exit 1
-else
-    touch $fileName.cs
+    if [ -e $fileName.cs ]
+    then
+        echo "$fileName already exists."
+        exit 1
+    else
+        touch $fileName.cs
 
-    echo "using System.Collections;
-using System.Collections.Generic;
-using UnityEngine; 
+        echo "using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine; 
 
-public class $fileName : MonoBehaviour {
-
-    #region SINGLETON
-    private static $fileName _instance;
-    public static $fileName Instance { get { return _instance; } }
-    #endregion
-
-    void Awake() {
+    public class $fileName : MonoBehaviour {
 
         #region SINGLETON
-        if (_instance != null && _instance != this) {
-            Destroy (this.gameObject);
-        } else {
-            _instance = this;
-        }
+        private static $fileName _instance;
+        public static $fileName Instance { get { return _instance; } }
         #endregion
 
-    }
+        void Awake() {
 
-}
-    " >> $fileName.cs
+            #region SINGLETON
+            if (_instance != null && _instance != this) {
+                Destroy (this.gameObject);
+            } else {
+                _instance = this;
+            }
+            #endregion
+
+        }
+
+    }
+        " >> $fileName.cs
+    fi
 
     echo $fileName singleton created.
-fi
+done
